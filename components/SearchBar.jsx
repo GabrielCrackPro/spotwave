@@ -7,15 +7,17 @@ import { AppContext } from "../AppContext";
 import ListCard from "./ListCard";
 import Chip from "./Chip";
 import searchFilters from "../data/filters";
+import SongPlaceholder from "../assets/song-placeholder.png";
 
 const SearchBar = ({ variant }) => {
   const inputRef = useRef(null);
-  const { accessToken, setSearchResults, searchResults } = useContext(AppContext);
+  const { accessToken, setSearchResults, searchResults } =
+    useContext(AppContext);
 
   const [search, setSearch] = useState("");
   const [inputFocused, setInputFocused] = useState(false);
   const [inputVariant, setInputVariant] = useState(variant);
-  const [searchFilter, setSearchFilter] = useState(searchFilters[5]);
+  const [searchFilter, setSearchFilter] = useState(searchFilters[0]);
 
   const searchContainerStyles = [styles.searchContainer];
   const searchContainerFocusedStyles = [
@@ -34,6 +36,7 @@ const SearchBar = ({ variant }) => {
   const handleFocus = () => {
     setInputFocused(true);
     setInputVariant("dark");
+    if (search) setSearch("");
   };
   const handleBlur = () => {
     setInputFocused(false);
@@ -49,10 +52,12 @@ const SearchBar = ({ variant }) => {
       setSearch("");
     }
   };
-  const handleSearch = async (type) => {
+  const handleSearch = async () => {
     try {
       const response = await fetch(
-        `https://api.spotify.com/v1/search?q=${search}&type=${type}`,
+        `https://api.spotify.com/v1/search?q=${search}&type=${
+          searchFilter.slug || "track"
+        }`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -60,12 +65,17 @@ const SearchBar = ({ variant }) => {
         }
       );
       const data = await response.json();
-      setSearchResults(data.tracks.items);
+      console.log(data);
+      setSearchResults(data[searchFilter.arrayName]);
     } catch (error) {
       console.log(error);
     }
   };
   const handleSearchFilter = (filter) => setSearchFilter(filter);
+
+  useEffect(() => {
+    handleSearch(searchFilter.slug);
+  }, [searchFilter]);
   return (
     <View style={inputFocused ? styles.searchFocused : {}}>
       <View
@@ -82,7 +92,11 @@ const SearchBar = ({ variant }) => {
         </Button>
         <TextInput
           ref={inputRef}
-          placeholder={searchResults ? `You've searched for ${search}` : "What do you feel like listening to?"}
+          placeholder={
+            searchResults
+              ? `You've searched for ${search}`
+              : "What do you feel like listening to?"
+          }
           cursorColor="#fff"
           placeholderTextColor={
             inputVariant == "light" ? "#000" : "#fff" && inputFocused && "gray"
@@ -91,18 +105,50 @@ const SearchBar = ({ variant }) => {
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChangeText={handleTextChange}
-          // TODO: Change to correct filter
-          onSubmitEditing={() => handleSearch("tracks")}
+          onSubmitEditing={handleSearch}
           style={searchBarStyles}
         />
       </View>
       <View style={searchResults ? styles.searchResults : { display: "none" }}>
-        <FlatList horizontal data={searchFilters} keyExtractor={(item) => item.name} renderItem={({ item }) => {
-          return <Chip title={item.name} variant={item === searchFilter ? "light" : "dark"} onPress={() => handleSearchFilter(item)} />;
-        }} />
-        <FlatList data={searchResults} keyExtractor={(item) => item.id} renderItem={({ item }) => {
-          return <ListCard item={item} image={item.album.images[0].url} />;
-        }} />
+        <FlatList
+          horizontal
+          data={searchFilters}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => {
+            return (
+              <Chip
+                title={item.name}
+                variant={item === searchFilter ? "light" : "dark"}
+                onPress={() => handleSearchFilter(item)}
+              />
+            );
+          }}
+        />
+        <FlatList
+          data={searchResults && searchResults.items}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            const imagesUrls = {
+              track: (item) =>
+                (item?.album?.images && item?.album?.images[0]?.url) ||
+                SongPlaceholder,
+              artist: (item) =>
+                (item.images && item.images[0]?.url) || SongPlaceholder,
+              playlist: () => SongPlaceholder,
+            };
+
+            const imageUrl = imagesUrls[searchFilter.slug](item);
+            console.log(imageUrl);
+
+            return (
+              <ListCard
+                item={item}
+                image={imageUrl}
+                imageStyle={searchFilter.slug == "artist" ? "round" : ""}
+              />
+            );
+          }}
+        />
       </View>
     </View>
   );
@@ -133,7 +179,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   searchFilters: {
-    flexDirection: "row"
+    flexDirection: "row",
   },
   dark: {
     backgroundColor: "#131314",

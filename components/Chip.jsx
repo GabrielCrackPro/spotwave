@@ -7,10 +7,19 @@ import Button from "./Button";
 const Chip = ({ title, variant, onPress }) => {
   const chipStyles = [styles.chip];
   variant &&
-    (variant == "dark" && chipStyles.push(styles.dark) || variant == "light" && chipStyles.push(styles.light));
+    ((variant == "dark" && chipStyles.push(styles.dark)) ||
+      (variant == "light" && chipStyles.push(styles.light)));
   return (
     <Button style={chipStyles} onPress={onPress}>
-      <Text bold style={variant == "light" && styles.darkText || variant == "dark" && styles.lightText}>{title}</Text>
+      <Text
+        bold
+        style={
+          (variant == "light" && styles.darkText) ||
+          (variant == "dark" && styles.lightText)
+        }
+      >
+        {title}
+      </Text>
     </Button>
   );
 };
@@ -21,7 +30,7 @@ const styles = StyleSheet.create({
   chip: {
     margin: 5,
     padding: 5,
-    borderRadius: 100
+    borderRadius: 100,
   },
   light: {
     backgroundColor: "#fff",
@@ -29,12 +38,12 @@ const styles = StyleSheet.create({
   dark: {
     backgroundColor: "#131314",
     borderWidth: 1,
-    borderColor: "#fff"
+    borderColor: "#fff",
   },
   lightText: {
-    color: "#fff"
+    color: "#fff",
   },
   darkText: {
-    color: "#000"
-  }
+    color: "#000",
+  },
 });

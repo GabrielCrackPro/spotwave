@@ -2,13 +2,16 @@
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import Text from "./Text";
-import SongPlaceholder from "../assets/song-placeholder.png";
 
-const ListCard = ({ item, image }) => {
+const ListCard = ({ item, image, imageStyle }) => {
+  const imageStyles = [styles.listCardImage];
+  imageStyle &&
+    imageStyle == "round" &&
+    imageStyles.push(styles.listCardImageRound);
   return (
     <TouchableOpacity>
       <View style={styles.listCard}>
-        <Image source={{ uri: image } || SongPlaceholder} style={styles.listCardImage} />
+        <Image source={{ uri: image }} style={imageStyles} />
         <Text subHeading>{item.name}</Text>
       </View>
     </TouchableOpacity>
@@ -22,13 +25,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 10,
     borderWidth: 1,
-    borderColor: "#131314"
+    borderColor: "#131314",
   },
   listCardImage: {
     height: 70,
-    width: 70
+    width: 70,
+  },
+  listCardImageRound: {
+    borderRadius: 100,
   },
   listCardButton: {
-    justifyContent: "space-around"
-  }
+    justifyContent: "space-around",
+  },
 });
