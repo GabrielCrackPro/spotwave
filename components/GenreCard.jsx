@@ -5,13 +5,14 @@ import Button from "./Button";
 import React from "react";
 import SongPlaceholder from "../assets/song-placeholder.png";
 
-const GenreCard = ({ name, uri, imageUri, onPress }) => {
+const GenreCard = ({ uri, imageUri, onPress }) => {
   return (
-    <ImageBackground source={imageUri || SongPlaceholder} resizeMode="cover">
+    <ImageBackground
+      source={{ uri: imageUri } || SongPlaceholder}
+      resizeMode="cover"
+    >
       <Button onPress={onPress}>
-        <View style={styles.genreCard}>
-          <Text bold style={{ color: "#000" }}>{name}</Text>
-        </View>
+        <View style={styles.genreCard}></View>
       </Button>
     </ImageBackground>
   );
@@ -23,6 +24,6 @@ const styles = StyleSheet.create({
   genreCard: {
     padding: 10,
     width: 150,
-    height: 140
+    height: 140,
   },
 });

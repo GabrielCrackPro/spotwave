@@ -48,8 +48,6 @@ const SearchBar = ({ variant }) => {
   const handleTextChange = async (text) => {
     if (text.length >= 3) {
       setSearch(text);
-    } else {
-      setSearch("");
     }
   };
   const handleSearch = async () => {
@@ -65,7 +63,6 @@ const SearchBar = ({ variant }) => {
         }
       );
       const data = await response.json();
-      console.log(data);
       setSearchResults(data[searchFilter.arrayName]);
     } catch (error) {
       console.log(error);
@@ -83,9 +80,13 @@ const SearchBar = ({ variant }) => {
           inputFocused ? searchContainerFocusedStyles : searchContainerStyles
         }
       >
-        <Button onPress={inputFocused && handleBlur}>
+        <Button
+          onPress={
+            (inputFocused && handleBlur) || (searchResults && handleBlur)
+          }
+        >
           <Feather
-            name={inputFocused ? "arrow-left" : "search"}
+            name={inputFocused || searchResults ? "arrow-left" : "search"}
             size={20}
             color={inputVariant == "light" ? "#000" : "#fff"}
           />
@@ -138,7 +139,6 @@ const SearchBar = ({ variant }) => {
             };
 
             const imageUrl = imagesUrls[searchFilter.slug](item);
-            console.log(imageUrl);
 
             return (
               <ListCard

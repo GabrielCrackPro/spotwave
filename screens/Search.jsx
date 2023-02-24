@@ -1,16 +1,39 @@
 /* eslint-disable no-unused-vars */
+import React, { useState, useContext, useEffect } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import Text from "../components/Text";
-import React from "react";
 import Header from "../components/Header";
 import Player from "../components/Player";
 import SearchBar from "../components/SearchBar";
 import GenreCard from "../components/GenreCard";
-import sampleData from "../data/sampleData";
+import { AppContext } from "../AppContext";
 import { useNavigation } from "@react-navigation/native";
 
 const Search = () => {
   const navigation = useNavigation();
+
+  const [featuredPlaylists, setFeaturedPlaylists] = useState([]);
+  const { accessToken } = useContext(AppContext);
+
+  useEffect(() => {
+    const getFeaturedPlaylists = async () => {
+      try {
+        const response = await fetch(
+          "https://api.spotify.com/v1/browse/featured-playlists",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setFeaturedPlaylists(data.playlists.items);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getFeaturedPlaylists();
+  }, []);
 
   const handleSelectGenre = (name) => {
     console.log(`Selected: ${name}`);
@@ -26,13 +49,20 @@ const Search = () => {
           Explore
         </Text>
         <FlatList
-          data={sampleData.Search.genres}
+          data={featuredPlaylists}
           numColumns={2}
           keyExtractor={(item) => item.name}
           renderItem={({ item }) => {
-            return <View style={{ padding: 5 }}>
-              <GenreCard name={item.name} onPress={() => handleSelectGenre(item.name)} />
-            </View>;
+            console.log(item);
+            return (
+              <View style={{ padding: 5 }}>
+                <GenreCard
+                  name={item.name}
+                  imageUri={item.images[0].url}
+                  onPress={() => handleSelectGenre(item.name)}
+                />
+              </View>
+            );
           }}
         />
       </View>
@@ -48,6 +78,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   explore: {
-    margin: 10
+    margin: 10,
   },
 });

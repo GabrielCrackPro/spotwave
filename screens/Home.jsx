@@ -28,7 +28,6 @@ const Home = () => {
         );
         const data = await response.json();
         await setUserPlaylists(data.items);
-        console.log(data);
       } catch (error) {
         console.error(error);
       }
