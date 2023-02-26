@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Home from "../screens/Home";
 import Search from "../screens/Search";
 import Library from "../screens/Library";
+import List from "../screens/List";
 
 const HomeTabNavigator = () => {
   const Tab = createBottomTabNavigator();

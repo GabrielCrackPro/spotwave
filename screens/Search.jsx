@@ -12,14 +12,14 @@ import { useNavigation } from "@react-navigation/native";
 const Search = () => {
   const navigation = useNavigation();
 
-  const [featuredPlaylists, setFeaturedPlaylists] = useState([]);
+  const [categories, setCategories] = useState([]);
   const { accessToken } = useContext(AppContext);
 
   useEffect(() => {
-    const getFeaturedPlaylists = async () => {
+    const getCategories = async () => {
       try {
         const response = await fetch(
-          "https://api.spotify.com/v1/browse/featured-playlists",
+          "https://api.spotify.com/v1/browse/categories",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -27,17 +27,17 @@ const Search = () => {
           }
         );
         const data = await response.json();
-        setFeaturedPlaylists(data.playlists.items);
+        setCategories(data.categories.items);
       } catch (error) {
         console.log(error);
       }
     };
-    getFeaturedPlaylists();
+    getCategories();
   }, []);
 
-  const handleSelectGenre = (name) => {
-    console.log(`Selected: ${name}`);
-    navigation.navigate("Playlists", { name });
+  const handleSelectCategory = (id) => {
+    console.log(`Selected: ${id}`);
+    navigation.navigate("List", { id });
     // TODO: Create playlists screen
   };
   return (
@@ -49,16 +49,16 @@ const Search = () => {
           Explore
         </Text>
         <FlatList
-          data={featuredPlaylists}
+          data={categories}
           numColumns={2}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
               <View style={{ padding: 5 }}>
                 <GenreCard
                   name={item.name}
-                  imageUri={item.images[0].url}
-                  onPress={() => handleSelectGenre(item.name)}
+                  imageUri={item.icons[0].url}
+                  onPress={() => handleSelectCategory(item.id)}
                 />
               </View>
             );

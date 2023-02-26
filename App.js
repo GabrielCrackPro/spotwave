@@ -6,8 +6,9 @@ import HomeTabNavigator from "./navigators/HomeTabNavigator";
 import Player from "./screens/Player.jsx";
 import Login from "./screens/Login";
 import { AppContextProvider } from "./AppContext";
+import List from "./screens/List";
 
-export default function App () {
+export default function App() {
   const Stack = createNativeStackNavigator();
   return (
     <AppContextProvider>
@@ -21,6 +22,7 @@ export default function App () {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="HomeTabNavigator" component={HomeTabNavigator} />
           <Stack.Screen name="Player" component={Player} />
+          <Stack.Screen name="List" component={List} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContextProvider>
