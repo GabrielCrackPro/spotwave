@@ -1,13 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
-import { View, Image, StyleSheet } from "react-native";
+import React, { useContext } from "react";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import ProfilePicture from "../assets/profile.png";
 import Button from "./Button";
 import Text from "./Text";
+import { AppContext } from "../AppContext";
 
 const Header = ({ screen }) => {
+
+  const { userProfile } = useContext(AppContext);
+
   const hours = new Date().getHours();
   const time = {
     morning: hours > 0 && hours <= 12,
@@ -26,6 +29,7 @@ const Header = ({ screen }) => {
     Library: ["magnify", "plus"],
   };
   const handleButtonPress = (action) => {
+    // TODO: Change screen map
     const screenMap = {
       "bell-outline": "Search",
       "history": "Search",
@@ -39,11 +43,14 @@ const Header = ({ screen }) => {
   return (
     <View style={styles.header}>
       <View style={styles.left}>
-        <Image
-          source={ProfilePicture}
-          alt="picture"
-          style={styles.profileImage}
-        />
+        <TouchableOpacity>
+          <Image
+            source={{ uri: userProfile.images[0].url }}
+            alt={userProfile.display_name}
+            style={styles.profileImage}
+          />
+
+        </TouchableOpacity>
         <Text subHeading bold style={styles.headerText}>
           {headerText}
         </Text>
