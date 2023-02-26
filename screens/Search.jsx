@@ -53,7 +53,6 @@ const Search = () => {
           numColumns={2}
           keyExtractor={(item) => item.name}
           renderItem={({ item }) => {
-            console.log(item);
             return (
               <View style={{ padding: 5 }}>
                 <GenreCard
