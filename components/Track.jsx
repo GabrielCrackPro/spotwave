@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { Audio } from "expo-av";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useContext } from "react";
 import Text from "./Text";
@@ -14,28 +15,17 @@ const Track = ({ track }) => {
     artists: track.album.artists,
   };
   const handleTrackPlay = async (trackUri) => {
-    console.log(`Selected: ${trackUri}`);
-    const response = await fetch(
-      "https://api.spotify.com/v1/me/player/currently-playing",
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uris: [trackUri],
-        }),
-      }
-    );
-    const data = await response.json();
-    console.log(data);
+    const soundObject = new Audio.Sound();
+    try {
+      await soundObject.loadAsync({ uri: track.preview_url });
+      await soundObject.playAsync();
+    } catch (error) {
+      console.error(error);
+    }
   };
+
   return (
-    <TouchableOpacity
-      onPress={() => handleTrackPlay(track.uri)}
-      style={styles.track}
-    >
+    <TouchableOpacity onPress={handleTrackPlay} style={styles.track}>
       <Image source={{ uri: trackData.image }} style={styles.image} />
       <View style={styles.info}>
         <View style={styles.infoLeft}>
