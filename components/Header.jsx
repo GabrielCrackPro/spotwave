@@ -7,35 +7,41 @@ import Button from "./Button";
 import Text from "./Text";
 import { AppContext } from "../AppContext";
 
-const Header = ({ screen }) => {
-
+const Header = ({ screen, title }) => {
   const { userProfile } = useContext(AppContext);
 
   const hours = new Date().getHours();
   const time = {
     morning: hours > 0 && hours <= 12,
     afternoon: hours > 13 && hours <= 20,
-    night: hours > 21 && hours <= 23
+    night: hours > 21 && hours <= 23,
   };
   const navigation = useNavigation();
   const headerText = {
-    Home: time.morning && "Good Morning" || time.afternoon && "Good Afternoon" || time.night && "Good Night",
+    Home:
+      (time.morning && "Good Morning") ||
+      (time.afternoon && "Good Afternoon") ||
+      (time.night && "Good Night"),
     Search: "Search",
     Library: "Your Library",
+    Playlist: "Playlist",
+    Other: title,
   }[screen];
   const headerActions = {
     Home: ["bell-outline", "history"],
     Search: ["camera-outline"],
     Library: ["magnify", "plus"],
+    Playlist: ["magnify", "plus"],
+    Other: ["heart-outline"],
   };
   const handleButtonPress = (action) => {
     // TODO: Change screen map
     const screenMap = {
       "bell-outline": "Search",
-      "history": "Search",
+      history: "Search",
       "camera-outline": "Search",
-      "magnify": "Search",
-      "plus": "Search",
+      magnify: "Search",
+      plus: "Search",
     };
     navigation.navigate(screenMap[action]);
   };
@@ -49,7 +55,6 @@ const Header = ({ screen }) => {
             alt={userProfile.display_name}
             style={styles.profileImage}
           />
-
         </TouchableOpacity>
         <Text subHeading bold style={styles.headerText}>
           {headerText}
@@ -70,7 +75,7 @@ const Header = ({ screen }) => {
           </Button>
         ))}
       </View>
-    </View >
+    </View>
   );
 };
 

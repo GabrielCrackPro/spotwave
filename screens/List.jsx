@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { FlatList, StyleSheet, View } from "react-native";
 import React, { useEffect, useContext, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import Text from "../components/Text";
 import GenreCard from "../components/GenreCard";
+import Header from "../components/Header";
 import { AppContext } from "../AppContext";
 
 const List = ({ route }) => {
@@ -10,6 +12,8 @@ const List = ({ route }) => {
   const { id } = route.params;
 
   const [listContent, setListContent] = useState([]);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getListContent = async () => {
@@ -29,9 +33,13 @@ const List = ({ route }) => {
       }
     };
     getListContent();
-  }, []);
+  }, [id]);
+  const handleSelectPlaylist = (playlistId, playlistName) => {
+    navigation.navigate("Playlist", { playlistId, playlistName });
+  };
   return (
     <View style={styles.list}>
+      <Header screen="Playlist" />
       <Text heading bold center>
         {id}
       </Text>
@@ -41,7 +49,11 @@ const List = ({ route }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           return (
-            <GenreCard imageUri={item.images[0].url} style={{ margin: 0 }} />
+            <GenreCard
+              imageUri={item.images[0].url}
+              style={{ margin: 0 }}
+              onPress={() => handleSelectPlaylist(item.id, item.name)}
+            />
           );
         }}
       />
